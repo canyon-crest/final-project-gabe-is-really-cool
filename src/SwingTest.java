@@ -23,7 +23,7 @@ class GameController {
         JButton startBtn = new JButton("Start Game");
         JButton helpBtn = new JButton("Controls");
         
-        startBtn.addActionListener(e -> { startFrame.setVisible(false); gameFrame.setVisible(true); gameBoard.startGame(); });
+        startBtn.addActionListener(e -> { startFrame.setVisible(false); gameFrame.setVisible(true); gameBoard.startGame(); SoundPlayer.playMusic("src/Hare_Tetris.wav");});
         helpBtn.addActionListener(e -> { startFrame.setVisible(false); controlsFrame.setVisible(true); });
 
         JPanel startPanel = new JPanel(new GridLayout(2, 1, 10, 10));
