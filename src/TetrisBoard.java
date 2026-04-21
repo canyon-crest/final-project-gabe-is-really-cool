@@ -1,61 +1,18 @@
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Color;
 
-public class SwingTest {
-    public static void main(String[] args) {
-        // Run the GUI on the Event Dispatch Thread
-        SwingUtilities.invokeLater(() -> new GameController().start());
-    }
-}
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
-class GameController {
-    JFrame startFrame, controlsFrame, gameFrame;
-    TetrisBoard gameBoard;
-
-    public void start() {
-        // 1. Start Frame
-        startFrame = new JFrame("Hare Tetris - Start");
-        startFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        startFrame.setSize(300, 200);
-        startFrame.setLayout(new GridBagLayout());
-
-        JButton startBtn = new JButton("Start Game");
-        JButton helpBtn = new JButton("Controls");
-        
-        startBtn.addActionListener(e -> { startFrame.setVisible(false); gameFrame.setVisible(true); gameBoard.startGame(); SoundPlayer.playMusic("src/Hare_Tetris.wav");});
-        helpBtn.addActionListener(e -> { startFrame.setVisible(false); controlsFrame.setVisible(true); });
-
-        JPanel startPanel = new JPanel(new GridLayout(2, 1, 10, 10));
-        startPanel.add(startBtn);
-        startPanel.add(helpBtn);
-        startFrame.add(startPanel);
-
-        // 2. Controls Frame
-        controlsFrame = new JFrame("Controls");
-        controlsFrame.setSize(300, 200);
-        JLabel helpLabel = new JLabel("<html><b>CONTROLS:</b><br>Arrows: Move & Rotate<br>Space: Hard Drop</html>", SwingConstants.CENTER);
-        JButton backBtn = new JButton("Back");
-        backBtn.addActionListener(e -> { controlsFrame.setVisible(false); startFrame.setVisible(true); });
-        
-        controlsFrame.setLayout(new BorderLayout());
-        controlsFrame.add(helpLabel, BorderLayout.CENTER);
-        controlsFrame.add(backBtn, BorderLayout.SOUTH);
-
-        // 3. Game Frame
-        gameFrame = new JFrame("Hare Tetris");
-        gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        gameFrame.setSize(300, 600);
-        gameFrame.setLayout(new BorderLayout()); 
-        
-        gameBoard = new TetrisBoard();
-        gameFrame.add(gameBoard);
-        gameFrame.addKeyListener(gameBoard.getKeyAdapter());
-
-        startFrame.setLocationRelativeTo(null);
-        startFrame.setVisible(true);
-    }
-}
+import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.Timer;
 
 class TetrisBoard extends JPanel {
     private final int WIDTH = 10, HEIGHT = 20, TILE_SIZE = 25;
@@ -64,6 +21,7 @@ class TetrisBoard extends JPanel {
     private Point piecePos;
     private int[][] currentPiece;
     private int currentType;
+    private BufferedImage img;
 
     // Tetromino definitions
     private final int[][][] SHAPES = {
@@ -75,7 +33,16 @@ class TetrisBoard extends JPanel {
 
     public TetrisBoard() {
         setBackground(Color.BLACK);
+        //250 x 500
         setPreferredSize(new Dimension(WIDTH * TILE_SIZE, HEIGHT * TILE_SIZE));
+        try {
+            // Provide the path to your image file
+            File file = new File("src/Face.jpeg");
+            img = ImageIO.read(file);
+            System.out.println("Image loaded successfully: " + img.getWidth() + "x" + img.getHeight());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void startGame() {
@@ -164,22 +131,19 @@ class TetrisBoard extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        // Dwraw static board
+        // Draw static board
         for (int r = 0; r < HEIGHT; r++)
             for (int c = 0; c < WIDTH; c++)
-                if (board[r][c] != 0) drawTile(g, c, r, COLORS[board[r][c] - 1]);
+                if (board[r][c] != 0) drawTile(g, c, r);
         // Draw active piece
         if (currentPiece != null) {
             for (int r = 0; r < currentPiece.length; r++)
                 for (int c = 0; c < currentPiece[0].length; c++)
-                    if (currentPiece[r][c] != 0) drawTile(g, piecePos.x + c, piecePos.y + r, COLORS[currentType]);
+                    if (currentPiece[r][c] != 0) drawTile(g, piecePos.x + c, piecePos.y + r);
         }
     }
 
-    private void drawTile(Graphics g, int x, int y, Color color) {
-        g.setColor(color);
-        g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE - 1, TILE_SIZE - 1);
-        g.setColor(color.darker());
-        g.drawRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE - 1, TILE_SIZE - 1);
+    private void drawTile(Graphics g, int x, int y) {
+        g.drawImage(img ,x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE - 1, TILE_SIZE - 1, null);
     }
 }
