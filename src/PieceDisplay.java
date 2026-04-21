@@ -15,12 +15,12 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 public class PieceDisplay extends JPanel{ 
-	 private final int[][][] SHAPES = {
+	private final int[][][] SHAPES = {
 		        {{1, 1, 1, 1}}, {{1, 1}, {1, 1}}, {{0, 1, 0}, {1, 1, 1}},
 		        {{0, 1, 1}, {1, 1, 0}}, {{1, 1, 0}, {0, 1, 1}},
 		        {{1, 0, 0}, {1, 1, 1}}, {{0, 0, 1}, {1, 1, 1}}
 	};
-	private final int WIDTH = 10, HEIGHT = 20, TILE_SIZE = 25;
+	private final int WIDTH = 4, HEIGHT = 4, TILE_SIZE = 25;
 	private int[][] board = new int[HEIGHT][WIDTH];
 	private Timer timer;
 	private Point piecePos;
@@ -28,19 +28,24 @@ public class PieceDisplay extends JPanel{
 	private int currentType;
 	private BufferedImage img;
 	    
-	    public PieceDisplay() {
-	        setBackground(Color.BLACK);
-	        //250 x 500
-	        setPreferredSize(new Dimension(WIDTH * TILE_SIZE, HEIGHT * TILE_SIZE));
-	        try {
-	            // Provide the path to your image file
-	            File file = new File("src/Face.jpeg");
-	            img = ImageIO.read(file);
-	            System.out.println("Image loaded successfully: " + img.getWidth() + "x" + img.getHeight());
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	        }
+	public PieceDisplay() {
+	    setBackground(Color.BLACK);
+	    //250 x 500
+	    setPreferredSize(new Dimension(WIDTH * TILE_SIZE, HEIGHT * TILE_SIZE));
+	    try {
+	        // Provide the path to your image file
+	        File file = new File("src/Face.jpeg");
+	        img = ImageIO.read(file);
+	        System.out.println("Image loaded successfully: " + img.getWidth() + "x" + img.getHeight());
+	    } catch (IOException e) {
+	        e.printStackTrace();
 	    }
+	}
+    
+    public void refreshPiece(int[][] currentPiece) {
+    	this.currentPiece = currentPiece;
+    	repaint();
+    }
 	    
 	    protected void paintComponent(Graphics g) {
 	        super.paintComponent(g);
@@ -52,7 +57,7 @@ public class PieceDisplay extends JPanel{
 	        if (currentPiece != null) {
 	            for (int r = 0; r < currentPiece.length; r++)
 	                for (int c = 0; c < currentPiece[0].length; c++)
-	                    if (currentPiece[r][c] != 0) drawTile(g, piecePos.x + c, piecePos.y + r);
+	                    if (currentPiece[r][c] != 0) drawTile(g, c, r);
 	        }
 	    }
 

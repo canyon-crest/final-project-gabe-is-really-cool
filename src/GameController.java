@@ -61,6 +61,8 @@ class GameController {
         gameBoard = new TetrisBoard();
         //500 x 250
         gameFrame.add(gameBoard);
+        PieceDisplay nextPieceDisplay = new PieceDisplay();
+        gameBoard.addPieceDisplay(nextPieceDisplay);
         gameBoard.setBorder(BorderFactory.createLineBorder(Color.GRAY));
         gameFrame.addKeyListener(gameBoard.getKeyAdapter());
         
@@ -95,6 +97,8 @@ class GameController {
         
         JLabel lines = new JLabel("LINES:");
         scoreBoard.add(lines);
+        
+        nextPiece.add(nextPieceDisplay);
 
         startFrame.setLocationRelativeTo(null);
         startFrame.setVisible(true);

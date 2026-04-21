@@ -20,8 +20,10 @@ class TetrisBoard extends JPanel {
     private Timer timer;
     private Point piecePos;
     private int[][] currentPiece;
+    private int[][] nextPiece;
     private int currentType;
     private BufferedImage img;
+    private PieceDisplay thisPieceDisplay;
 
     // Tetromino definitions
     private final int[][][] SHAPES = {
@@ -33,6 +35,8 @@ class TetrisBoard extends JPanel {
 
     public TetrisBoard() {
         setBackground(Color.BLACK);
+        currentType = (int) (Math.random() * SHAPES.length);
+        nextPiece = SHAPES[currentType];
         //250 x 500
         setPreferredSize(new Dimension(WIDTH * TILE_SIZE, HEIGHT * TILE_SIZE));
         try {
@@ -52,10 +56,16 @@ class TetrisBoard extends JPanel {
         timer = new Timer(500, e -> { if (!movePiece(0, 1)) freeze(); repaint(); });
         timer.start();
     }
+    
+    public void addPieceDisplay(PieceDisplay pieceDisplay) {
+    	thisPieceDisplay = pieceDisplay;
+    }
 
     private void spawnPiece() {
+    	currentPiece = nextPiece;
         currentType = (int) (Math.random() * SHAPES.length);
-        currentPiece = SHAPES[currentType];
+        nextPiece = SHAPES[currentType];
+        thisPieceDisplay.refreshPiece(nextPiece);
         piecePos = new Point(WIDTH / 2 - currentPiece[0].length / 2, 0);
         if (intersects(piecePos.x, piecePos.y, currentPiece)) {
             timer.stop();
