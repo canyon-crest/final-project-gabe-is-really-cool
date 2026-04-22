@@ -14,15 +14,15 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-class TetrisBoard extends JPanel {
-    private final int WIDTH = 10, HEIGHT = 20, TILE_SIZE = 25;
-    private int[][] board = new int[HEIGHT][WIDTH];
-    private Timer timer;
-    private Point piecePos;
-    private int[][] currentPiece;
-    private int[][] nextPiece;
-    private int currentType;
-    private BufferedImage img;
+class TetrisBoard extends Board {
+//    private final int WIDTH = 10, HEIGHT = 20, TILE_SIZE = 25;
+//    private int[][] board = new int[HEIGHT][WIDTH];
+//    private Timer timer;
+//    private Point piecePos;
+//    private int[][] currentPiece;
+	private int[][] nextPiece;
+	private int currentType;
+//    private BufferedImage img;
     private PieceDisplay thisPieceDisplay;
 
     // Tetromino definitions
@@ -34,6 +34,7 @@ class TetrisBoard extends JPanel {
     private final Color[] COLORS = {Color.CYAN, Color.YELLOW, Color.MAGENTA, Color.GREEN, Color.RED, Color.BLUE, Color.ORANGE};
 
     public TetrisBoard() {
+    	super(10, 20, 25);
         setBackground(Color.BLACK);
         currentType = (int) (Math.random() * SHAPES.length);
         nextPiece = SHAPES[currentType];
@@ -138,22 +139,5 @@ class TetrisBoard extends JPanel {
         };
     }
 
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        // Draw static board
-        for (int r = 0; r < HEIGHT; r++)
-            for (int c = 0; c < WIDTH; c++)
-                if (board[r][c] != 0) drawTile(g, c, r);
-        // Draw active piece
-        if (currentPiece != null) {
-            for (int r = 0; r < currentPiece.length; r++)
-                for (int c = 0; c < currentPiece[0].length; c++)
-                    if (currentPiece[r][c] != 0) drawTile(g, piecePos.x + c, piecePos.y + r);
-        }
-    }
 
-    private void drawTile(Graphics g, int x, int y) {
-        g.drawImage(img ,x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE - 1, TILE_SIZE - 1, null);
-    }
 }
