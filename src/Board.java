@@ -19,7 +19,6 @@ public abstract class Board extends JPanel{
 	protected final int HEIGHT;
 	protected final int TILE_SIZE;
 	protected int[][] board;
-	protected Timer timer;
 	protected Point piecePos;
 	protected int[][] currentPiece;
 	protected int currentType;
@@ -30,7 +29,11 @@ public abstract class Board extends JPanel{
 		this.TILE_SIZE = TILE_SIZE;
 		board = new int[WIDTH][HEIGHT];
 	}
-	
+    protected final int[][][] SHAPES = {
+            {{1, 1, 1, 1}}, {{1, 1}, {1, 1}}, {{0, 1, 0}, {1, 1, 1}},
+            {{0, 1, 1}, {1, 1, 0}}, {{1, 1, 0}, {0, 1, 1}},
+            {{1, 0, 0}, {1, 1, 1}}, {{0, 0, 1}, {1, 1, 1}}
+        };
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

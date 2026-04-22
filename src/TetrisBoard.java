@@ -17,7 +17,7 @@ import javax.swing.Timer;
 class TetrisBoard extends Board {
 //    private final int WIDTH = 10, HEIGHT = 20, TILE_SIZE = 25;
 //    private int[][] board = new int[HEIGHT][WIDTH];
-//    private Timer timer;
+	private Timer timer;
 //    private Point piecePos;
 //    private int[][] currentPiece;
 	private int[][] nextPiece;
@@ -26,13 +26,11 @@ class TetrisBoard extends Board {
     private PieceDisplay thisPieceDisplay;
 
     // Tetromino definitions
-    private final int[][][] SHAPES = {
-        {{1, 1, 1, 1}}, {{1, 1}, {1, 1}}, {{0, 1, 0}, {1, 1, 1}},
-        {{0, 1, 1}, {1, 1, 0}}, {{1, 1, 0}, {0, 1, 1}},
-        {{1, 0, 0}, {1, 1, 1}}, {{0, 0, 1}, {1, 1, 1}}
-    };
-    private final Color[] COLORS = {Color.CYAN, Color.YELLOW, Color.MAGENTA, Color.GREEN, Color.RED, Color.BLUE, Color.ORANGE};
-
+//    private final int[][][] SHAPES = {
+//        {{1, 1, 1, 1}}, {{1, 1}, {1, 1}}, {{0, 1, 0}, {1, 1, 1}},
+//        {{0, 1, 1}, {1, 1, 0}}, {{1, 1, 0}, {0, 1, 1}},
+//        {{1, 0, 0}, {1, 1, 1}}, {{0, 0, 1}, {1, 1, 1}}
+//    };
     public TetrisBoard() {
     	super(10, 20, 25);
         setBackground(Color.BLACK);
