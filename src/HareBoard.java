@@ -26,11 +26,14 @@ class HareBoard extends Board {
     private PieceDisplay thisPieceDisplay;
 
     // Tetromino definitions
-//    private final int[][][] SHAPES = {
-//        {{1, 1, 1, 1}}, {{1, 1}, {1, 1}}, {{0, 1, 0}, {1, 1, 1}},
-//        {{0, 1, 1}, {1, 1, 0}}, {{1, 1, 0}, {0, 1, 1}},
-//        {{1, 0, 0}, {1, 1, 1}}, {{0, 0, 1}, {1, 1, 1}}
-//    };
+    private final int[][][] SHAPES = {
+    		{{1,0,0,0,1},{1,0,0,0,1},{1,1,1,1,1},{1,0,0,0,1},{1,0,0,0,1}},
+    		{{0,0,1,0,0},{0,1,0,1,0},{0,1,1,1,0},{1,0,0,0,1},{1,0,0,0,1}},
+    		{{1,1,0},{1,0,1},{1,1,0},{1,0,1}},
+    		{{1,1,0},{1,0,0},{1,1,0},{1,0,0},{1,1,0}},
+    		{{0,1,0},{0,1,0},{1,1,1}}
+
+    };
     public HareBoard() {
     	super(20, 20, 25);
         setBackground(Color.BLACK);
@@ -131,9 +134,38 @@ class HareBoard extends Board {
                     case KeyEvent.VK_S -> movePiece(0, 1);
                     case KeyEvent.VK_W -> rotate();
                     case KeyEvent.VK_SPACE -> { while (movePiece(0, 1)); freeze(); }
+                    case KeyEvent.VK_L -> fireLaser(); // New Laser Ability
                 }
             }
         };
+    }
+    private boolean isLaserActive = false;
+    private int laserColumn = -1;
+
+    public void fireLaser() {
+        // Determine the column to blast (center of the current falling piece)
+        laserColumn = piecePos.x + (currentPiece[0].length / 2);
+        
+        // Safety check for bounds
+        if (laserColumn < 0) laserColumn = 0;
+        if (laserColumn >= WIDTH) laserColumn = WIDTH - 1;
+
+        // Clear the column
+        for (int r = 0; r < HEIGHT; r++) {
+            board[r][laserColumn] = 0;
+        }
+
+        // Visual effect: Trigger a short timer to show the laser line
+        isLaserActive = true;
+        repaint();
+
+        // Hide the laser after 100 milliseconds
+        Timer laserTimer = new Timer(100, e -> {
+            isLaserActive = false;
+            repaint();
+        });
+        laserTimer.setRepeats(false);
+        laserTimer.start();
     }
 
 
