@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -23,12 +24,18 @@ public abstract class Board extends JPanel{
 	protected int[][] currentPiece;
 	protected int currentType;
 	protected BufferedImage img;
+    protected JFrame gameFrame, endFrame;
 	public Board(int WIDTH, int HEIGHT, int TILE_SIZE) {
 		this.WIDTH = WIDTH;
 		this.HEIGHT = HEIGHT;
 		this.TILE_SIZE = TILE_SIZE;
 		board = new int[WIDTH][HEIGHT];
 	}
+	
+	  public void addFrames(JFrame gameFrame, JFrame endFrame) {
+	    	this.gameFrame = gameFrame;
+	    	this.endFrame = endFrame;
+	    }
     protected final int[][][] SHAPES = {
             {{1, 1, 1, 1}}, {{1, 1}, {1, 1}}, {{0, 1, 0}, {1, 1, 1}},
             {{0, 1, 1}, {1, 1, 0}}, {{1, 1, 0}, {0, 1, 1}},

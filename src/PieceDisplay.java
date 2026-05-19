@@ -28,7 +28,7 @@ public class PieceDisplay extends Board{
 //	private BufferedImage img;
 	    
 	public PieceDisplay() {
-		super(4,4,25);
+		super(5,5,25);
 		super.piecePos = new Point(0,0);
 	    setBackground(Color.BLACK);
 	    //250 x 500

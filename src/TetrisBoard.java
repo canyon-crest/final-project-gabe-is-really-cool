@@ -13,6 +13,8 @@ import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 class TetrisBoard extends Board {
 //    private final int WIDTH = 10, HEIGHT = 20, TILE_SIZE = 25;
@@ -24,6 +26,14 @@ class TetrisBoard extends Board {
 	private int currentType;
 //    private BufferedImage img;
     private PieceDisplay thisPieceDisplay;
+    private int score = 0;
+    private JLabel scoreLabelUI; // Stores UI component reference pointer
+
+ // Add this setup method 
+ public void setScoreLabel(JLabel label) {
+     this.scoreLabelUI = label;
+ }
+
 
     // Tetromino definitions
 //    private final int[][][] SHAPES = {
@@ -60,6 +70,7 @@ class TetrisBoard extends Board {
     	thisPieceDisplay = pieceDisplay;
     }
 
+  
     private void spawnPiece() {
     	currentPiece = nextPiece;
         currentType = (int) (Math.random() * SHAPES.length);
@@ -68,7 +79,8 @@ class TetrisBoard extends Board {
         piecePos = new Point(WIDTH / 2 - currentPiece[0].length / 2, 0);
         if (intersects(piecePos.x, piecePos.y, currentPiece)) {
             timer.stop();
-            JOptionPane.showMessageDialog(this, "Game Over!");
+            gameFrame.setVisible(false);
+            endFrame.setVisible(true);
         }
     }
 
@@ -101,6 +113,7 @@ class TetrisBoard extends Board {
     }
 
     private void clearLines() {
+    	int rows = 0;
         for (int r = HEIGHT - 1; r >= 0; r--) {
             boolean full = true;
             for (int c = 0; c < WIDTH; c++) if (board[r][c] == 0) full = false;
@@ -108,6 +121,13 @@ class TetrisBoard extends Board {
                 for (int i = r; i > 0; i--) board[i] = board[i - 1].clone();
                 board[0] = new int[WIDTH];
                 r++;
+                rows++;
+            }
+        }
+        if(rows>0) {
+        	score += rows*100;
+        	if (scoreLabelUI != null) {
+                scoreLabelUI.setText("SCORE: " + score);
             }
         }
     }

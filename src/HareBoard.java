@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+import javax.swing.JLabel;
 
 class HareBoard extends Board {
 //    private final int WIDTH = 10, HEIGHT = 20, TILE_SIZE = 25;
@@ -24,14 +25,21 @@ class HareBoard extends Board {
 	private int currentType;
 //    private BufferedImage img;
     private PieceDisplay thisPieceDisplay;
+    private int score = 0;
+    private JLabel scoreLabelUI; // Stores UI component reference pointer
+
+ // Add this setup method 
+ public void setScoreLabel(JLabel label) {
+     this.scoreLabelUI = label;
+ }
+
 
     // Tetromino definitions
     private final int[][][] SHAPES = {
-    		{{1,0,0,0,1},{1,0,0,0,1},{1,1,1,1,1},{1,0,0,0,1},{1,0,0,0,1}},
-    		{{0,0,1,0,0},{0,1,0,1,0},{0,1,1,1,0},{1,0,0,0,1},{1,0,0,0,1}},
-    		{{1,1,0},{1,0,1},{1,1,0},{1,0,1}},
-    		{{1,1,0},{1,0,0},{1,1,0},{1,0,0},{1,1,0}},
-    		{{0,1,0},{0,1,0},{1,1,1}}
+    		{{1,0,1},{1,0,1},{1,1,1},{1,0,1},{1,0,1}},
+    		{{0,1,0},{1,0,1},{1,1,1},{1,0,1},{1,0,1}},
+    		{{1,1,0},{1,0,1},{1,1,0},{1,0,1},{1,0,1}},
+    		{{1,1,1},{1,0,0},{1,1,1},{1,0,0},{1,1,1}}
 
     };
     public HareBoard() {
@@ -70,7 +78,8 @@ class HareBoard extends Board {
         piecePos = new Point(WIDTH / 2 - currentPiece[0].length / 2, 0);
         if (intersects(piecePos.x, piecePos.y, currentPiece)) {
             timer.stop();
-            JOptionPane.showMessageDialog(this, "Game Over!");
+            gameFrame.setVisible(false);
+            endFrame.setVisible(true);
         }
     }
 
@@ -103,6 +112,7 @@ class HareBoard extends Board {
     }
 
     private void clearLines() {
+    	int linesCleared = 0;
         for (int r = HEIGHT - 1; r >= 0; r--) {
             boolean full = true;
             for (int c = 0; c < WIDTH; c++) if (board[r][c] == 0) full = false;
@@ -110,9 +120,17 @@ class HareBoard extends Board {
                 for (int i = r; i > 0; i--) board[i] = board[i - 1].clone();
                 board[0] = new int[WIDTH];
                 r++;
+                linesCleared ++;
+            }
+        }
+        if(linesCleared>0) {
+        	score += linesCleared*100;
+        	if (scoreLabelUI != null) {
+                scoreLabelUI.setText("SCORE: " + score);
             }
         }
     }
+ 
 
     private boolean intersects(int nx, int ny, int[][] shape) {
         for (int r = 0; r < shape.length; r++)
@@ -134,39 +152,9 @@ class HareBoard extends Board {
                     case KeyEvent.VK_S -> movePiece(0, 1);
                     case KeyEvent.VK_W -> rotate();
                     case KeyEvent.VK_SPACE -> { while (movePiece(0, 1)); freeze(); }
-                    case KeyEvent.VK_L -> fireLaser(); // New Laser Ability
                 }
             }
         };
     }
-    private boolean isLaserActive = false;
-    private int laserColumn = -1;
-
-    public void fireLaser() {
-        // Determine the column to blast (center of the current falling piece)
-        laserColumn = piecePos.x + (currentPiece[0].length / 2);
-        
-        // Safety check for bounds
-        if (laserColumn < 0) laserColumn = 0;
-        if (laserColumn >= WIDTH) laserColumn = WIDTH - 1;
-
-        // Clear the column
-        for (int r = 0; r < HEIGHT; r++) {
-            board[r][laserColumn] = 0;
-        }
-
-        // Visual effect: Trigger a short timer to show the laser line
-        isLaserActive = true;
-        repaint();
-
-        // Hide the laser after 100 milliseconds
-        Timer laserTimer = new Timer(100, e -> {
-            isLaserActive = false;
-            repaint();
-        });
-        laserTimer.setRepeats(false);
-        laserTimer.start();
-    }
-
-
+ 
 }
