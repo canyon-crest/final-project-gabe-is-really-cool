@@ -26,11 +26,26 @@ class HareBoard extends Board {
 //    private BufferedImage img;
     private PieceDisplay thisPieceDisplay;
     private int score = 0;
+    private int level = 1;
+    private int totalLines = 0;
     private JLabel scoreLabelUI; // Stores UI component reference pointer
+    private JLabel finalScoreLabel;
+    private JLabel levelLabel;
+    private JLabel rowsLabel;
+    private int blub = 500;
 
  // Add this setup method 
  public void setScoreLabel(JLabel label) {
      this.scoreLabelUI = label;
+ }
+ public void setLevelLabel(JLabel label) {
+	 this.levelLabel = label;
+ }
+ public void setRowsLabel(JLabel label) {
+	 this.rowsLabel = label;
+ }
+ public void setFinalScoreLabel(JLabel label) {
+	 this.finalScoreLabel = label;
  }
 
 
@@ -112,7 +127,7 @@ class HareBoard extends Board {
     }
 
     private void clearLines() {
-    	int linesCleared = 0;
+    	int rows = 0;
         for (int r = HEIGHT - 1; r >= 0; r--) {
             boolean full = true;
             for (int c = 0; c < WIDTH; c++) if (board[r][c] == 0) full = false;
@@ -120,16 +135,26 @@ class HareBoard extends Board {
                 for (int i = r; i > 0; i--) board[i] = board[i - 1].clone();
                 board[0] = new int[WIDTH];
                 r++;
-                linesCleared ++;
+                rows++;
             }
         }
-        if(linesCleared>0) {
-        	score += linesCleared*100;
+        if(rows>0) {
+        	score += (rows^2)*100*level;
+        	totalLines += rows;
+        	level = totalLines/10+1;
         	if (scoreLabelUI != null) {
                 scoreLabelUI.setText("SCORE: " + score);
+                levelLabel.setText("LEVEL:" + level);
+                rowsLabel.setText("ROWS:" + totalLines);
             }
+        	blub = 25*(int)(20 * Math.pow(0.9, level));
+        	timer.stop();
+            timer = new Timer(blub, e -> { if (!movePiece(0, 1)) freeze(); repaint(); });
+            timer.start();
+
         }
     }
+
  
 
     private boolean intersects(int nx, int ny, int[][] shape) {
@@ -155,6 +180,9 @@ class HareBoard extends Board {
                 }
             }
         };
+    }
+    public int getScore() {
+    	return score;
     }
  
 }

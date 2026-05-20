@@ -12,12 +12,14 @@ import javax.swing.BorderFactory;
 
 class GameController { 
     JFrame startFrame, controlsFrame, gameFrame, hareFrame, endFrame; 
-    TetrisBoard gameBoard; 
-    HareBoard hareBoard; 
+    TetrisBoard gameBoard = new TetrisBoard();
+    HareBoard hareBoard = new HareBoard(); 
     
     // Step A: Declare your score label at the class level so it can be passed around
-    private JLabel scoreLabel; 
-
+    private JLabel scoreLabel, scoree, level, lines;
+    private int score;
+    
+    
     public void start() { 
         // 1. Start Frame 
         startFrame = new JFrame("Hare Tetris - Start"); 
@@ -36,7 +38,7 @@ class GameController {
             gameFrame.setSize(600, 600); 
             gameFrame.setLayout(new BorderLayout()); 
 
-            PieceDisplay normalDisplay = new PieceDisplay(); 
+            PieceDisplay normalDisplay = new PieceDisplay(4); 
             JPanel normalRightPanel = buildSidePanel(normalDisplay);
             JPanel normalBottomPanel = new JPanel();
             normalBottomPanel.setBackground(Color.yellow);
@@ -46,7 +48,10 @@ class GameController {
             gameFrame.add(gameBoard, BorderLayout.CENTER); 
             
             // Step B: Pass the label reference into the game engine
-            gameBoard.setScoreLabel(scoreLabel); 
+            gameBoard.setScoreLabel(scoreLabel);
+            gameBoard.setLevelLabel(level);
+            gameBoard.setRowsLabel(lines);
+            gameBoard.setFinalScoreLabel(scoree);
             
             gameBoard.addPieceDisplay(normalDisplay); 
             gameBoard.addFrames(gameFrame, endFrame); 
@@ -74,7 +79,7 @@ class GameController {
             hareFrame.setSize(850, 600); 
             hareFrame.setLayout(new BorderLayout()); 
 
-            PieceDisplay hareDisplay = new PieceDisplay(); 
+            PieceDisplay hareDisplay = new PieceDisplay(5); 
             JPanel hareRightPanel = buildSidePanel(hareDisplay);
             JPanel hareBottomPanel = new JPanel();
             hareBottomPanel.setBackground(Color.yellow);
@@ -126,6 +131,7 @@ class GameController {
         endFrame = new JFrame("End"); 
         endFrame.setSize(300, 200); 
         JLabel gameOver = new JLabel("GAME OVER", SwingConstants.CENTER); 
+        scoree = new JLabel("SCORE: " + gameBoard.getScore());
         JButton restartBtn = new JButton("Restart"); 
         restartBtn.addActionListener(e -> { 
             endFrame.setVisible(false); 
@@ -133,7 +139,8 @@ class GameController {
             SoundPlayer.stopMusic(); 
         }); 
         endFrame.add(gameOver, BorderLayout.CENTER); 
-        endFrame.add(restartBtn, BorderLayout.SOUTH); 
+        endFrame.add(restartBtn, BorderLayout.SOUTH);
+        endFrame.add(scoree, BorderLayout.CENTER);
     } 
 
     private JPanel buildSidePanel(PieceDisplay displayInstance) {
@@ -159,9 +166,9 @@ class GameController {
         scoreLabel = new JLabel("SCORE: 0"); 
         scoreBoard.add(scoreLabel); 
         
-        JLabel level = new JLabel("LEVEL: 1"); 
+        level = new JLabel(" LEVEL: 1"); 
         scoreBoard.add(level); 
-        JLabel lines = new JLabel("LINES: 0"); 
+        lines = new JLabel(" LINES: 0"); 
         scoreBoard.add(lines);
 
         return rightPanel;
