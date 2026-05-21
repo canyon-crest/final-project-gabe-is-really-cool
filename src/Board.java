@@ -11,6 +11,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -25,6 +26,24 @@ public abstract class Board extends JPanel{
 	protected int currentType;
 	protected BufferedImage img;
     protected JFrame gameFrame, endFrame;
+    
+    //for live updates to scoreboard
+    private JLabel scoreLabelUI; // Stores UI component reference pointer
+    private JLabel finalScoreLabel;
+    private JLabel levelLabel;
+    private JLabel rowsLabel;
+    public void setScoreLabel(JLabel label) {
+        this.scoreLabelUI = label;
+    }
+    public void setLevelLabel(JLabel label) {
+   	 this.levelLabel = label;
+    }
+    public void setRowsLabel(JLabel label) {
+   	 this.rowsLabel = label;
+    }
+    public void setFinalScoreLabel(JLabel label) {
+   	 this.finalScoreLabel = label;
+    }
 	public Board(int WIDTH, int HEIGHT, int TILE_SIZE) {
 		this.WIDTH = WIDTH;
 		this.HEIGHT = HEIGHT;
@@ -36,11 +55,13 @@ public abstract class Board extends JPanel{
 	    	this.gameFrame = gameFrame;
 	    	this.endFrame = endFrame;
 	    }
-    protected final int[][][] SHAPES = {
+    //default tetris shapes
+	  protected final int[][][] SHAPES = {
             {{1, 1, 1, 1}}, {{1, 1}, {1, 1}}, {{0, 1, 0}, {1, 1, 1}},
             {{0, 1, 1}, {1, 1, 0}}, {{1, 1, 0}, {0, 1, 1}},
             {{1, 0, 0}, {1, 1, 1}}, {{0, 0, 1}, {1, 1, 1}}
         };
+	  //overriding JFrame paintcomponent to paint tetris pieces
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -55,7 +76,7 @@ public abstract class Board extends JPanel{
                     if (currentPiece[r][c] != 0) drawTile(g, piecePos.x + c, piecePos.y + r);
         }
     }
-
+    //draw one glorious square of Mr. Hare's face
     private void drawTile(Graphics g, int x, int y) {
         g.drawImage(img ,x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE - 1, TILE_SIZE - 1, null);
     }

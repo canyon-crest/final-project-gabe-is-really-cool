@@ -28,25 +28,11 @@ class HareBoard extends Board {
     private int score = 0;
     private int level = 1;
     private int totalLines = 0;
-    private JLabel scoreLabelUI; // Stores UI component reference pointer
-    private JLabel finalScoreLabel;
-    private JLabel levelLabel;
-    private JLabel rowsLabel;
+
     private int blub = 500;
 
- // Add this setup method 
- public void setScoreLabel(JLabel label) {
-     this.scoreLabelUI = label;
- }
- public void setLevelLabel(JLabel label) {
-	 this.levelLabel = label;
- }
- public void setRowsLabel(JLabel label) {
-	 this.rowsLabel = label;
- }
- public void setFinalScoreLabel(JLabel label) {
-	 this.finalScoreLabel = label;
- }
+ 
+
 
 
     // Tetromino definitions
@@ -54,7 +40,8 @@ class HareBoard extends Board {
     		{{1,0,1},{1,0,1},{1,1,1},{1,0,1},{1,0,1}},
     		{{0,1,0},{1,0,1},{1,1,1},{1,0,1},{1,0,1}},
     		{{1,1,0},{1,0,1},{1,1,0},{1,0,1},{1,0,1}},
-    		{{1,1,1},{1,0,0},{1,1,1},{1,0,0},{1,1,1}}
+    		{{1,1,1},{1,0,0},{1,1,1},{1,0,0},{1,1,1}},
+    		{{0,1,0},{0,1,0},{1,1,1}}
 
     };
     public HareBoard() {

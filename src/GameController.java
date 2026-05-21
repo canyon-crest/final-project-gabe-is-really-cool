@@ -1,19 +1,24 @@
 import java.awt.BorderLayout; 
 import java.awt.Color; 
 import java.awt.GridBagLayout; 
-import java.awt.GridLayout; 
+import java.awt.GridLayout;
+import java.awt.Point;
 import java.awt.Dimension; 
 import javax.swing.JButton; 
 import javax.swing.JFrame; 
 import javax.swing.JLabel; 
 import javax.swing.JPanel; 
-import javax.swing.SwingConstants; 
+import javax.swing.SwingConstants;
+import javax.swing.Timer;
 import javax.swing.BorderFactory; 
 
 class GameController { 
-    JFrame startFrame, controlsFrame, gameFrame, hareFrame, endFrame; 
+    JFrame startFrame, controlsFrame, gameFrame, hareFrame, endFrame, adFrame; 
     TetrisBoard gameBoard = new TetrisBoard();
     HareBoard hareBoard = new HareBoard(); 
+    private Timer dvdTimer;
+    private int moveX = 5; // Horizontal speed
+    private int moveY = 5; // Vertical speed
     
     // Step A: Declare your score label at the class level so it can be passed around
     private JLabel scoreLabel, scoree, level, lines;
@@ -31,12 +36,22 @@ class GameController {
         JButton hareBtn = new JButton("Hare Mode"); 
         JButton helpBtn = new JButton("Controls"); 
 
-        // ACTION: STANDARD TETRIS LAUNCH
+        // Button to launch standard tetris mode
         startBtn.addActionListener(e -> { 
             gameFrame = new JFrame("Hare Tetris"); 
             gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
             gameFrame.setSize(600, 600); 
-            gameFrame.setLayout(new BorderLayout()); 
+            gameFrame.setLayout(new BorderLayout());
+            
+            adFrame = new JFrame("Advertisement");
+            adFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+            adFrame.setSize(300, 300); 
+            adFrame.setLayout(new BorderLayout());
+            adFrame.setVisible(true);
+            adFrame.setAlwaysOnTop(true);
+
+            bounce(adFrame);
+            
 
             PieceDisplay normalDisplay = new PieceDisplay(4); 
             JPanel normalRightPanel = buildSidePanel(normalDisplay);
@@ -66,13 +81,13 @@ class GameController {
             gameBoard.startGame(); 
             SoundPlayer.playMusic("src/Hare_Tetris.wav"); 
         }); 
-
+        // Button to view controls
         helpBtn.addActionListener(e -> { 
             startFrame.setVisible(false); 
             controlsFrame.setVisible(true); 
         }); 
 
-        // ACTION: HARE MODE LAUNCH
+        // Button to launch special Hare mode
         hareBtn.addActionListener(e -> { 
             hareFrame = new JFrame("Hare Tetris - Hare Mode"); 
             hareFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
@@ -90,6 +105,9 @@ class GameController {
             
             // Step C: Pass the label reference into the hare engine
             hareBoard.setScoreLabel(scoreLabel); 
+            hareBoard.setLevelLabel(level);
+            hareBoard.setRowsLabel(lines);
+            hareBoard.setFinalScoreLabel(scoree);
             
             hareBoard.addPieceDisplay(hareDisplay); 
             hareBoard.addFrames(hareFrame, endFrame); 
@@ -142,7 +160,7 @@ class GameController {
         endFrame.add(restartBtn, BorderLayout.SOUTH);
         endFrame.add(scoree, BorderLayout.CENTER);
     } 
-
+    // side panel for next piece and scoreboard in-game
     private JPanel buildSidePanel(PieceDisplay displayInstance) {
         JPanel rightPanel = new JPanel(); 
         rightPanel.setBackground(Color.blue); 
@@ -172,5 +190,33 @@ class GameController {
         scoreBoard.add(lines);
 
         return rightPanel;
+    }
+    public void bounce(JFrame frame) {
+        if (dvdTimer != null) dvdTimer.stop();
+
+        dvdTimer = new Timer(50, e -> {
+            Point loc = frame.getLocation();
+            Dimension size = frame.getSize();
+            Dimension screen = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+
+            
+            int nextX = loc.x + moveX;
+            int nextY = loc.y + moveY;
+
+            if (nextX <= 0 || nextX + size.width >= screen.width) {
+                moveX *= -1; 
+                nextX = loc.x + moveX;
+            }
+
+            if (nextY <= 0 || nextY + size.height >= screen.height) {
+                moveY *= -1;
+                nextY = loc.y + moveY;
+            }
+            System.out.println(loc.y+" "+loc.x);
+
+            frame.setLocation(nextX, nextY);
+        });
+
+        dvdTimer.start();
     }
 }

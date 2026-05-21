@@ -34,6 +34,10 @@ class TetrisBoard extends Board {
     private JLabel levelLabel;
     private JLabel rowsLabel;
     private int blub = 500;
+    private Timer dvdTimer;
+    private int moveX = 1; // Horizontal speed
+    private int moveY = 1; // Vertical speed
+
 
  // Add this setup method 
  public void setScoreLabel(JLabel label) {
@@ -77,8 +81,10 @@ class TetrisBoard extends Board {
         board = new int[HEIGHT][WIDTH];
         spawnPiece();
         if (timer != null) timer.stop();
+        //repeatedly moves piece, freezes game, and repaints the board
         timer = new Timer(blub, e -> { if (!movePiece(0, 1)) freeze(); repaint(); });
         timer.start();
+        startDvdBounce(gameFrame);
     }
     
     public void addPieceDisplay(PieceDisplay pieceDisplay) {
@@ -97,6 +103,7 @@ class TetrisBoard extends Board {
             gameFrame.setVisible(false);
             finalScoreLabel.setText("Score:" + score);
             endFrame.setVisible(true);
+            SoundPlayer.stopMusic();
         }
     }
 
@@ -141,6 +148,7 @@ class TetrisBoard extends Board {
             }
         }
         if(rows>0) {
+        	//updates score
         	score += (rows^2)*100*level;
         	totalLines += rows;
         	level = totalLines/10+1;
@@ -149,6 +157,8 @@ class TetrisBoard extends Board {
                 levelLabel.setText("LEVEL:" + level);
                 rowsLabel.setText("ROWS:" + totalLines);
             }
+        	SoundPlayer.playSoundEffect("src/Hare_Tetris.wav");
+        	shakeScreen(gameFrame, rows*40);
         	blub = 25*(int)(20 * Math.pow(0.9, level));
         	timer.stop();
             timer = new Timer(blub, e -> { if (!movePiece(0, 1)) freeze(); repaint(); });
@@ -180,6 +190,60 @@ class TetrisBoard extends Board {
                 }
             }
         };
+    }
+    //jiggle physics
+    public void shakeScreen(JFrame frame, int intensity) {
+        final Point originalLocation = frame.getLocation();
+        final int shakeDuration = 25*intensity; // milliseconds
+        int shakeIntensity = intensity;  // pixels
+        final long startTime = System.currentTimeMillis();
+
+        Timer shakeTimer = new Timer(20, null); // Run every 20ms
+        shakeTimer.addActionListener(e -> {
+            long elapsed = System.currentTimeMillis() - startTime;
+            
+            if (elapsed < shakeDuration) {
+            	double multiplier =  (25*intensity-elapsed)/1000.0;
+            	System.out.println(elapsed);
+            	System.out.println(multiplier);
+                int xOffset = (int)(multiplier* ((Math.random() * shakeIntensity)- (shakeIntensity / 2)));
+                int yOffset = (int)(multiplier* ((Math.random() * shakeIntensity)- (shakeIntensity / 2)));
+                
+                frame.setLocation(originalLocation.x + xOffset, originalLocation.y + yOffset);
+            } else {
+                frame.setLocation(originalLocation);
+                ((Timer) e.getSource()).stop();
+            }
+        });
+        shakeTimer.start();
+    }
+    //WHY KEN WHY
+    public void startDvdBounce(JFrame frame) {
+        if (dvdTimer != null) dvdTimer.stop();
+
+        dvdTimer = new Timer(50, e -> {
+            Point loc = frame.getLocation();
+            Dimension size = frame.getSize();
+            Dimension screen = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+
+            
+            int nextX = loc.x + level*moveX;
+            int nextY = loc.y + level*moveY;
+
+            if (nextX <= 0 || nextX*level + size.width >= screen.width) {
+                moveX *= -1; 
+                nextX = loc.x + moveX*level;
+            }
+
+            if (nextY <= 0 || nextY*level + size.height >= screen.height) {
+                moveY *= -1;
+                nextY = loc.y + moveY*level;
+            }
+
+            frame.setLocation(nextX, nextY);
+        });
+
+        dvdTimer.start();
     }
     public int getScore() {
     	System.out.println(score);
