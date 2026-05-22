@@ -71,7 +71,6 @@ class TetrisBoard extends Board {
             // Provide the path to your image file
             File file = new File("src/Face.jpeg");
             img = ImageIO.read(file);
-            System.out.println("Image loaded successfully: " + img.getWidth() + "x" + img.getHeight());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -103,11 +102,13 @@ class TetrisBoard extends Board {
             gameFrame.setVisible(false);
             finalScoreLabel.setText("Score:" + score);
             endFrame.setVisible(true);
+            SoundPlayer.playSoundEffect("./src/gameover.wav");
             SoundPlayer.stopMusic();
         }
     }
 
     public boolean movePiece(int dx, int dy) {
+        SoundPlayer.playSoundEffect("./src/boops.wav");
         if (!intersects(piecePos.x + dx, piecePos.y + dy, currentPiece)) {
             piecePos.translate(dx, dy);
             repaint();
@@ -117,6 +118,7 @@ class TetrisBoard extends Board {
     }
 
     public void rotate() {
+        SoundPlayer.playSoundEffect("./src/boops.wav");
         int[][] rotated = new int[currentPiece[0].length][currentPiece.length];
         for (int r = 0; r < currentPiece.length; r++)
             for (int c = 0; c < currentPiece[0].length; c++)
@@ -146,6 +148,18 @@ class TetrisBoard extends Board {
                 r++;
                 rows++;
             }
+        }
+        if(rows == 1) {
+            SoundPlayer.playSoundEffect("./src/single.wav");
+        }
+        else if (rows == 2) {
+            SoundPlayer.playSoundEffect("./src/double.wav");
+        }
+        else if (rows == 3) {
+            SoundPlayer.playSoundEffect("./src/triple.wav");
+        }
+        else if (rows == 4) {
+            SoundPlayer.playSoundEffect("./src/four.wav");
         }
         if(rows>0) {
         	//updates score

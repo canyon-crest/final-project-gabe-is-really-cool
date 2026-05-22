@@ -11,6 +11,8 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import javax.swing.BorderFactory; 
+import javax.swing.*;
+import java.awt.*;
 
 class GameController { 
     JFrame startFrame, controlsFrame, gameFrame, hareFrame, endFrame, adFrame; 
@@ -44,12 +46,20 @@ class GameController {
             gameFrame.setLayout(new BorderLayout());
             
             adFrame = new JFrame("Advertisement");
-            adFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+            // 1. Create an ImageIcon
+            ImageIcon adIcon = new ImageIcon("./src/cspluaplua.webp");
+            
+            // 2. Add it to a JLabel
+            JLabel adLabel = new JLabel(adIcon);
+            
+            // 3. Add label to the frame
+            adFrame.add(adLabel);
+            adFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             adFrame.setSize(300, 300); 
             adFrame.setLayout(new BorderLayout());
             adFrame.setVisible(true);
             adFrame.setAlwaysOnTop(true);
-
+            
             bounce(adFrame);
             
 
@@ -212,7 +222,6 @@ class GameController {
                 moveY *= -1;
                 nextY = loc.y + moveY;
             }
-            System.out.println(loc.y+" "+loc.x);
 
             frame.setLocation(nextX, nextY);
         });
