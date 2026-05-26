@@ -46,20 +46,13 @@ class GameController {
             gameFrame.setLayout(new BorderLayout());
             
             adFrame = new JFrame("Advertisement");
-            // 1. Create an ImageIcon
-            ImageIcon adIcon = new ImageIcon("./src/cspluaplua.webp");
-            
-            // 2. Add it to a JLabel
-            JLabel adLabel = new JLabel(adIcon);
-            
-            // 3. Add label to the frame
-            adFrame.add(adLabel);
-            adFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            adFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
             adFrame.setSize(300, 300); 
             adFrame.setLayout(new BorderLayout());
             adFrame.setVisible(true);
             adFrame.setAlwaysOnTop(true);
-            
+            adFrame.add(new JLabel(new ImageIcon("./src/cspluaplua.webp")));
+
             bounce(adFrame);
             
 
@@ -183,7 +176,7 @@ class GameController {
 
         JLabel nextPieceLabel = new JLabel("NEXT PIECE:"); 
         nextPiece.add(nextPieceLabel); 
-        nextPiece.add(displayInstance); 
+        nextPiece.add(displayInstance);
 
         JPanel scoreBoard = new JPanel(); 
         scoreBoard.setPreferredSize(new Dimension(300, 300)); 
@@ -198,7 +191,7 @@ class GameController {
         scoreBoard.add(level); 
         lines = new JLabel(" LINES: 0"); 
         scoreBoard.add(lines);
-
+        
         return rightPanel;
     }
     public void bounce(JFrame frame) {

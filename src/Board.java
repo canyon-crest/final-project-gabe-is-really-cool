@@ -28,10 +28,10 @@ public abstract class Board extends JPanel{
     protected JFrame gameFrame, endFrame;
     
     //for live updates to scoreboard
-    private JLabel scoreLabelUI; // Stores UI component reference pointer
-    private JLabel finalScoreLabel;
-    private JLabel levelLabel;
-    private JLabel rowsLabel;
+    protected JLabel scoreLabelUI; // Stores UI component reference pointer
+    protected JLabel finalScoreLabel;
+    protected JLabel levelLabel;
+    protected JLabel rowsLabel;
     public void setScoreLabel(JLabel label) {
         this.scoreLabelUI = label;
     }

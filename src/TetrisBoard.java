@@ -29,31 +29,10 @@ class TetrisBoard extends Board {
     private int score = 0;
     private int level = 1;
     private int totalLines = 0;
-    private JLabel scoreLabelUI; // Stores UI component reference pointer
-    private JLabel finalScoreLabel;
-    private JLabel levelLabel;
-    private JLabel rowsLabel;
     private int blub = 500;
     private Timer dvdTimer;
     private int moveX = 1; // Horizontal speed
     private int moveY = 1; // Vertical speed
-
-
- // Add this setup method 
- public void setScoreLabel(JLabel label) {
-     this.scoreLabelUI = label;
- }
- public void setLevelLabel(JLabel label) {
-	 this.levelLabel = label;
- }
- public void setRowsLabel(JLabel label) {
-	 this.rowsLabel = label;
- }
- public void setFinalScoreLabel(JLabel label) {
-	 this.finalScoreLabel = label;
- }
-
-
     // Tetromino definitions
 //    private final int[][][] SHAPES = {
 //        {{1, 1, 1, 1}}, {{1, 1}, {1, 1}}, {{0, 1, 0}, {1, 1, 1}},
@@ -171,7 +150,6 @@ class TetrisBoard extends Board {
                 levelLabel.setText("LEVEL:" + level);
                 rowsLabel.setText("ROWS:" + totalLines);
             }
-        	SoundPlayer.playSoundEffect("src/Hare_Tetris.wav");
         	shakeScreen(gameFrame, rows*40);
         	blub = 25*(int)(20 * Math.pow(0.9, level));
         	timer.stop();
