@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 class HareBoard extends Board {
@@ -28,33 +29,56 @@ class HareBoard extends Board {
     private int score = 0;
     private int level = 1;
     private int totalLines = 0;
-
     private int blub = 500;
-
- 
-
-
-
+    private Timer dvdTimer;
+    private int moveX = 3; // Horizontal speed
+    private int moveY = 3; // Vertical speed
     // Tetromino definitions
     private final int[][][] SHAPES = {
-    		{{1,0,1},{1,0,1},{1,1,1},{1,0,1},{1,0,1}},
-    		{{0,1,0},{1,0,1},{1,1,1},{1,0,1},{1,0,1}},
-    		{{1,1,0},{1,0,1},{1,1,0},{1,0,1},{1,0,1}},
-    		{{1,1,1},{1,0,0},{1,1,1},{1,0,0},{1,1,1}},
-    		{{0,1,0},{0,1,0},{1,1,1}}
-
-    };
+    	    // 'H' - Standard
+    	    {{1, 0, 1}, 
+    	     {1, 1, 1}, 
+    	     {1, 0, 1}},
+    	     
+    	    // 'A' - Pointed
+    	    {{0, 1, 0}, 
+    	     {1, 1, 1}, 
+    	     {1, 0, 1}},
+    	     
+    	    // 'R' - Blocky
+    	    {{1, 1, 0}, 
+    	     {1, 1, 0}, 
+    	     {1, 0, 1}},
+    	    
+    	    {
+    	     {0, 1, 0}, 
+    	     {0, 1, 0}, 
+    	     {1, 1, 1}},
+    	     
+    	    // 'E' - Standard
+    	    {{1, 1, 1}, 
+    	     {1, 1, 0}, 
+    	     {1, 1, 1}},
+    	    
+    	    
+    	 // '67' - Block
+    	    {{1, 1, 1, 0, 1, 1, 1},
+    	     {1, 0, 0, 0, 0, 0, 1},
+    	     {1, 1, 1, 0, 0, 0, 1},
+    	     {1, 0, 1, 0, 0, 0, 1},
+    	     {1, 1, 1, 0, 0, 0, 1}}
+    	};
     public HareBoard() {
-    	super(20, 20, 25);
+    	super(15, 20, 25);
         setBackground(Color.BLACK);
         currentType = (int) (Math.random() * SHAPES.length);
         nextPiece = SHAPES[currentType];
+        //250 x 500
         setPreferredSize(new Dimension(WIDTH * TILE_SIZE, HEIGHT * TILE_SIZE));
         try {
             // Provide the path to your image file
             File file = new File("src/Face.jpeg");
             img = ImageIO.read(file);
-            System.out.println("Image loaded successfully: " + img.getWidth() + "x" + img.getHeight());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -64,14 +88,17 @@ class HareBoard extends Board {
         board = new int[HEIGHT][WIDTH];
         spawnPiece();
         if (timer != null) timer.stop();
-        timer = new Timer(500, e -> { if (!movePiece(0, 1)) freeze(); repaint(); });
+        //repeatedly moves piece, freezes game, and repaints the board
+        timer = new Timer(blub, e -> { if (!movePiece(0, 1)) freeze(); repaint(); });
         timer.start();
+        startDvdBounce(gameFrame);
     }
     
     public void addPieceDisplay(PieceDisplay pieceDisplay) {
     	thisPieceDisplay = pieceDisplay;
     }
 
+  
     private void spawnPiece() {
     	currentPiece = nextPiece;
         currentType = (int) (Math.random() * SHAPES.length);
@@ -81,11 +108,15 @@ class HareBoard extends Board {
         if (intersects(piecePos.x, piecePos.y, currentPiece)) {
             timer.stop();
             gameFrame.setVisible(false);
+            finalScoreLabel.setText("Score:" + score);
             endFrame.setVisible(true);
+            SoundPlayer.playSoundEffect("./src/gameover.wav");
+            SoundPlayer.stopMusic();
         }
     }
 
     public boolean movePiece(int dx, int dy) {
+        SoundPlayer.playSoundEffect("./src/boops.wav");
         if (!intersects(piecePos.x + dx, piecePos.y + dy, currentPiece)) {
             piecePos.translate(dx, dy);
             repaint();
@@ -95,6 +126,7 @@ class HareBoard extends Board {
     }
 
     public void rotate() {
+        SoundPlayer.playSoundEffect("./src/boops.wav");
         int[][] rotated = new int[currentPiece[0].length][currentPiece.length];
         for (int r = 0; r < currentPiece.length; r++)
             for (int c = 0; c < currentPiece[0].length; c++)
@@ -125,7 +157,20 @@ class HareBoard extends Board {
                 rows++;
             }
         }
+        if(rows == 1) {
+            SoundPlayer.playSoundEffect("./src/single.wav");
+        }
+        else if (rows == 2) {
+            SoundPlayer.playSoundEffect("./src/double.wav");
+        }
+        else if (rows == 3) {
+            SoundPlayer.playSoundEffect("./src/triple.wav");
+        }
+        else if (rows == 4) {
+            SoundPlayer.playSoundEffect("./src/four.wav");
+        }
         if(rows>0) {
+        	//updates score
         	score += (rows^2)*100*level;
         	totalLines += rows;
         	level = totalLines/10+1;
@@ -134,6 +179,7 @@ class HareBoard extends Board {
                 levelLabel.setText("LEVEL:" + level);
                 rowsLabel.setText("ROWS:" + totalLines);
             }
+        	shakeScreen(gameFrame, rows*40);
         	blub = 25*(int)(20 * Math.pow(0.9, level));
         	timer.stop();
             timer = new Timer(blub, e -> { if (!movePiece(0, 1)) freeze(); repaint(); });
@@ -141,8 +187,6 @@ class HareBoard extends Board {
 
         }
     }
-
- 
 
     private boolean intersects(int nx, int ny, int[][] shape) {
         for (int r = 0; r < shape.length; r++)
@@ -168,8 +212,64 @@ class HareBoard extends Board {
             }
         };
     }
-    public int getScore() {
-    	return score;
+    //jiggle physics
+    public void shakeScreen(JFrame frame, int intensity) {
+        final Point originalLocation = frame.getLocation();
+        final int shakeDuration = 25*intensity; // milliseconds
+        int shakeIntensity = intensity;  // pixels
+        final long startTime = System.currentTimeMillis();
+
+        Timer shakeTimer = new Timer(20, null); // Run every 20ms
+        shakeTimer.addActionListener(e -> {
+            long elapsed = System.currentTimeMillis() - startTime;
+            
+            if (elapsed < shakeDuration) {
+            	double multiplier =  (25*intensity-elapsed)/1000.0;
+            	System.out.println(elapsed);
+            	System.out.println(multiplier);
+                int xOffset = (int)(multiplier* ((Math.random() * shakeIntensity)- (shakeIntensity / 2)));
+                int yOffset = (int)(multiplier* ((Math.random() * shakeIntensity)- (shakeIntensity / 2)));
+                
+                frame.setLocation(originalLocation.x + xOffset, originalLocation.y + yOffset);
+            } else {
+                frame.setLocation(originalLocation);
+                ((Timer) e.getSource()).stop();
+            }
+        });
+        shakeTimer.start();
     }
- 
+    //WHY KEN WHY
+    public void startDvdBounce(JFrame frame) {
+        if (dvdTimer != null) dvdTimer.stop();
+
+        dvdTimer = new Timer(50, e -> {
+            Point loc = frame.getLocation();
+            Dimension size = frame.getSize();
+            Dimension screen = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+
+            
+            int nextX = loc.x + level*moveX;
+            int nextY = loc.y + level*moveY;
+
+            if (nextX <= 0 || nextX*level + size.width >= screen.width) {
+                moveX *= -1; 
+                nextX = loc.x + moveX*level;
+            }
+
+            if (nextY <= 0 || nextY*level + size.height >= screen.height) {
+                moveY *= -1;
+                nextY = loc.y + moveY*level;
+            }
+
+            frame.setLocation(nextX, nextY);
+        });
+
+        dvdTimer.start();
+    }
+    public int getScore() {
+    	System.out.println(score);
+    	return score;
+    	
+    }
+
 }
